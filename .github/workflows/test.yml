@@ -3,9 +3,8 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    container: archlinux:latest  # vercmp comes from pacman
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
+      - run: pacman -Sy --noconfirm python
       - run: python test_threatfeed.py

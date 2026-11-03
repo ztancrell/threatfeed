@@ -1,0 +1,10 @@
+[Unit]
+Description=Run personal threat feed hourly
+
+[Timer]
+OnCalendar=hourly
+RandomizedDelaySec=5m
+Persistent=true
+
+[Install]
+WantedBy=timers.target

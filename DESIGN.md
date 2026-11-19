@@ -6,7 +6,7 @@ A personal threat feed for this one Arch/CachyOS desktop. An hourly systemd time
 `threatfeed.py`, which pulls security news, CISA KEV and the Arch security tracker, merges
 items into stories ranked by risk, and writes a daily digest to `out/digest/`. It sends a
 desktop notification only when a story touches something installed here (pacman packages,
-Flatpak apps, `watch.txt`). It also rebuilds a merged IP blocklist at `out/blocklist.txt`.
+Flatpak apps, `~/.config/threatfeed/watch.txt`). It also rebuilds a merged IP blocklist at `out/blocklist.txt`.
 Stdlib Python only, all state local (`out/seen.db`).
 
 ## Open questions
@@ -23,5 +23,7 @@ Stdlib Python only, all state local (`out/seen.db`).
 
 - Runs locally on a systemd timer; watchlist comes from what's installed on this machine.
 - Only watchlist matches and failing sources notify; everything else stays in the digest.
-- Code lives in a private GitHub repo (`ztancrell/threatfeed`); generated `out/` is not committed.
+- Code lives in a public GitHub repo (`ztancrell/threatfeed`); generated `out/` is not committed.
+  Personal watch terms live in `~/.config/threatfeed/watch.txt`, outside the repo (2026-11-19).
+  Superseded: the repo was private and held `watch.txt` and a hand-picked common-word list.
 - GitHub Actions runs the tests only, in an Arch container (tests need pacman's `vercmp`).

@@ -14,8 +14,8 @@ catalog = {"CVE-1": {"cveID": "CVE-1", "vendorProject": "Fortinet", "product": "
                      "knownRansomwareCampaignUse": "Known", "dueDate": "2026-12-01"}}
 assert [i[0] for i in kev(catalog)] == ["CVE-1"]
 
-# Watchlist: packages + watch.txt, minus common words, lib32 and "!term" lines.
-terms = watch_terms("FortiOS\n\n!curl\n", ["curl", "openssl", "file", "lib32-glibc", "go"])
+# Watchlist: packages + watch.txt, minus lib32 and "!term" lines.
+terms = watch_terms("FortiOS\n\n!curl\n!file\n", ["curl", "openssl", "file", "lib32-glibc", "go"])
 assert terms == {"fortios", "openssl"}, terms
 pattern = watch_pattern(terms)
 assert pattern.findall("OpenSSL bug") == ["OpenSSL"]

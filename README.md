@@ -30,9 +30,18 @@ and open decisions.
 
 ## Watchlist
 
-Installed pacman packages + Flatpak apps + `watch.txt`. In `watch.txt`, one term per line for
-things pacman doesn't know about (`fortios`), or `!term` to silence a noisy term. A headline
-match means the term is named, not that your version is affected.
+Installed pacman packages + Flatpak apps + `~/.config/threatfeed/watch.txt` (honours
+`$XDG_CONFIG_HOME`; a missing file is fine). It lives outside the repo, so your terms stay
+private. One term per line for things pacman doesn't know about, or `!term` to silence a
+noisy term, such as a package named like an everyday word:
+
+```
+firefox
+linux kernel
+!patch
+```
+
+A headline match means the term is named, not that your version is affected.
 
 ## Install
 

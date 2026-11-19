@@ -5,15 +5,17 @@ Run on a timer. Every new item goes to out/digest/YYYY-MM-DD.md, merged into
 stories and ranked by risk. Only stories matching your watchlist notify you, and
 so do sources that keep failing. out/blocklist.txt is rebuilt each run.
 
-Watchlist = installed pacman packages + Flatpak apps + watch.txt. In watch.txt, put one term per
-line for anything pacman doesn't know about ("fortios"), or "!term" to stop a
-noisy term matching. A headline match means it names the term, not that your version
+Watchlist = installed pacman packages + Flatpak apps + ~/.config/threatfeed/watch.txt
+($XDG_CONFIG_HOME is honoured). In it, put one term per line for anything pacman doesn't
+know about ("fortios"), or "!term" to drop a noisy term, such as a package named like an
+everyday word ("!patch"). A headline match means it names the term, not that your version
 is affected. Arch tracker entries are version-checked: they all appear in the digest,
 and notify when High/Critical or in KEV, and again when a fix ships. Versions are
 compared against Arch's numbers, so CachyOS rebuilds may be slightly off.
 """
 import ipaddress
 import json
+import os
 import re
 import sqlite3
 import subprocess
@@ -26,7 +28,7 @@ from urllib.parse import urlparse
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "out"
-WATCH = HERE / "watch.txt"
+WATCH = Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config") / "threatfeed" / "watch.txt"
 
 NEWS = {
     "CISA": "https://www.cisa.gov/cybersecurity-advisories/all.xml",
@@ -50,9 +52,6 @@ ROUNDUP_CVES = 3  # articles naming more CVEs than this are roundups, not one st
 
 CVE = re.compile(r"CVE-\d{4}-\d{4,}", re.I)
 OFF_TOPIC = ("bleepingcomputer.com/news/artificial-intelligence/",)  # product news, not security
-# Installed packages named like everyday words, which would match unrelated headlines.
-# ponytail: hand-picked from this machine's packages; "!term" in watch.txt covers the rest.
-COMMON_WORDS = set()
 TITLE_NOISE = set("""
     the and for with from that this via new after over into its are was has have can
     now how why who what says said attack attacks attackers hackers flaw flaws
@@ -179,7 +178,7 @@ def watch_terms(watch_text, packages):
     lines = [w.strip().lower() for w in watch_text.splitlines() if w.strip()]
     ignored = {w[1:].strip() for w in lines if w.startswith("!")}
     names = {re.sub(r"-(git|bin)$", "", p.lower()) for p in packages if not p.startswith("lib32-")}
-    usable = {n for n in names if len(n) >= 3} - COMMON_WORDS
+    usable = {n for n in names if len(n) >= 3}
     return (usable | {w for w in lines if not w.startswith("!")}) - ignored
 
 
